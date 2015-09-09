@@ -204,6 +204,15 @@ uint32_t toku_get_checkpoint_period_unlocked (CACHETABLE ct) {
     return ct->cp.get_checkpoint_period();
 }
 
+void toku_set_checkpoint_rebalance_mode (CACHETABLE ct, uint32_t new_mode) {
+    ct->cp.set_checkpoint_rebalance_mode(new_mode);
+}
+
+uint32_t toku_get_checkpoint_rebalance_mode_unlocked (CACHETABLE ct) {
+    return ct->cp.get_checkpoint_rebalance_mode();
+}
+
+
 void toku_set_cleaner_period (CACHETABLE ct, uint32_t new_period) {
     ct->cl.set_period(new_period);
 }
@@ -2881,6 +2890,10 @@ void *toku_cachefile_get_userdata(CACHEFILE cf) {
     return cf->userdata;
 }
 
+uint32_t toku_cachefile_get_rebalance_mode(CACHEFILE cf) {
+    return toku_get_checkpoint_rebalance_mode_unlocked(cf->cachetable);
+}
+
 CACHETABLE
 toku_cachefile_get_cachetable(CACHEFILE cf) {
     return cf->cachetable;
@@ -4347,6 +4360,7 @@ int checkpointer::init(pair_list *_pl,
         m_checkpointer_cron_init = true;
     }
     m_checkpointer_init = true;
+    m_rebalance_mode = 0;
     return r;
 }
 
@@ -4374,6 +4388,20 @@ void checkpointer::set_checkpoint_period(uint32_t new_period) {
 //
 uint32_t checkpointer::get_checkpoint_period() {
     return toku_minicron_get_period_in_seconds_unlocked(&m_checkpointer_cron);
+}
+
+//
+// Sets leaf rebalance algorithm
+//
+void checkpointer::set_checkpoint_rebalance_mode(uint32_t new_mode) {
+   m_rebalance_mode = new_mode; 
+}
+
+//
+// Gets current rebalancing mode
+//
+uint32_t checkpointer::get_checkpoint_rebalance_mode() {
+    return m_rebalance_mode;
 }
 
 //

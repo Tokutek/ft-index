@@ -72,6 +72,7 @@ void CHECKPOINT_STATUS_S::init(void) {
     if (m_initialized) return;
 #define CP_STATUS_INIT(k,c,t,l) TOKUFT_STATUS_INIT((*this), k, c, t, "checkpoint: " l, TOKU_ENGINE_STATUS|TOKU_GLOBAL_STATUS)
     CP_STATUS_INIT(CP_PERIOD,                               CHECKPOINT_PERIOD,              UINT64,     "period");
+    CP_STATUS_INIT(CP_REBALANCE_MODE,                       CHECKPOINT_REBALANCE_MODE,      UINT64,     "rebalance mode in effect");
     CP_STATUS_INIT(CP_FOOTPRINT,                            CHECKPOINT_FOOTPRINT,           UINT64,     "footprint");
     CP_STATUS_INIT(CP_TIME_LAST_CHECKPOINT_BEGIN,           CHECKPOINT_LAST_BEGAN,          UNIXTIME,   "last checkpoint began");
     CP_STATUS_INIT(CP_TIME_LAST_CHECKPOINT_BEGIN_COMPLETE,  CHECKPOINT_LAST_COMPLETE_BEGAN, UNIXTIME,   "last complete checkpoint began");
@@ -333,6 +334,15 @@ void FT_STATUS_S::init() {
     FT_STATUS_INIT(FT_PRO_RIGHTMOST_LEAF_SHORTCUT_FAIL_REACTIVE,RIGHTMOST_LEAF_SHORTCUT_FAIL_REACTIVE, PARCOUNT, "promotion: tried the rightmost leaf shorcut but failed (child reactive)");
 
     FT_STATUS_INIT(FT_CURSOR_SKIP_DELETED_LEAF_ENTRY,         CURSOR_SKIP_DELETED_LEAF_ENTRY,       PARCOUNT, "cursor skipped deleted leaf entries");
+
+    FT_STATUS_INIT(FT_LEAF_NODES_CLONED,                      LEAF_NODES_CLONED,                    UINT64,   "total number of times leaf nodes were cloned");
+    FT_STATUS_INIT(FT_NONLEAF_NODES_CLONED,                   NONLEAF_NODES_CLONED,                 UINT64,   "total number of times non leaf nodes were cloned");
+    FT_STATUS_INIT(FT_LEAF_NODE_CLONE_TIME,                   LEAF_NODE_CLONE_TIME,                 UINT64,   "time spent cloning leaf nodes in microseconds");
+    FT_STATUS_INIT(FT_NONLEAF_NODE_CLONE_TIME,                NONLEAF_NODE_CLONE_TIME,              UINT64,   "time spent cloning non leaf nodes in microseconds");
+    FT_STATUS_INIT(FT_LEAF_NODE_CLONE_PARTITION_TIME,         LEAF_NODE_CLONE_PARTITION_TIME,       UINT64,   "time spent cloning leaf node partitions in microseconds");
+    FT_STATUS_INIT(FT_NONLEAF_NODE_CLONE_PARTITION_TIME,      NONLEAF_NODE_CLONE_PARTITION_TIME,    UINT64,   "time spent cloning non-leaf node partitions in microseconds");
+    FT_STATUS_INIT(FT_LEAF_NODE_REBALANCES_SKIPPED,           LEAF_NODE_REBALANCES_SKIPPED,         UINT64,   "leaf nodes that skipped rebalance");
+    FT_STATUS_INIT(FT_LEAF_NODE_REBALANCE_TIME,               LEAF_NODE_REBALANCE_TIME,             UINT64,   "time spent in leaf node rebalance in microseconds");
 
     m_initialized = true;
 #undef FT_STATUS_INIT

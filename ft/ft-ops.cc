@@ -607,6 +607,7 @@ void toku_ftnode_clone_callback(
     void* write_extraargs
     )
 {
+    uint64_t start_time = toku_current_time_microsec();
     FTNODE node = static_cast<FTNODE>(value_data);
     toku_ftnode_assert_fully_in_memory(node);
     FT ft = static_cast<FT>(write_extraargs);
@@ -615,7 +616,7 @@ void toku_ftnode_clone_callback(
         // set header stats, must be done before rebalancing
         toku_ftnode_update_disk_stats(node, ft, for_checkpoint);
         // rebalance the leaf node
-        toku_ftnode_leaf_rebalance(node, ft->h->basementnodesize);
+        toku_ftnode_leaf_rebalance(ft, node);
     }
 
     cloned_node->oldest_referenced_xid_known = node->oldest_referenced_xid_known;
@@ -640,7 +641,13 @@ void toku_ftnode_clone_callback(
         toku_move_ftnode_messages_to_stale(ft, node);
     }
     // clone partition
+    uint64_t part_start_time = toku_current_time_microsec();
     toku_ftnode_clone_partitions(node, cloned_node);
+    if (node->height == 0) {
+        FT_STATUS_INC(FT_LEAF_NODE_CLONE_PARTITION_TIME, toku_current_time_microsec() - part_start_time);
+    } else {
+        FT_STATUS_INC(FT_NONLEAF_NODE_CLONE_PARTITION_TIME, toku_current_time_microsec() - part_start_time);
+    }
 
     // clear dirty bit
     node->dirty = 0;
@@ -649,9 +656,12 @@ void toku_ftnode_clone_callback(
     // set new pair attr if necessary
     if (node->height == 0) {
         *new_attr = make_ftnode_pair_attr(node);
-    }
-    else {
+        FT_STATUS_INC(FT_LEAF_NODES_CLONED, 1);
+        FT_STATUS_INC(FT_LEAF_NODE_CLONE_TIME, toku_current_time_microsec() - start_time);
+    } else {
         new_attr->is_valid = false;
+        FT_STATUS_INC(FT_NONLEAF_NODES_CLONED, 1);
+        FT_STATUS_INC(FT_NONLEAF_NODE_CLONE_TIME, toku_current_time_microsec() - start_time);
     }
     *clone_size = ftnode_memory_size(cloned_node);
     *cloned_value_data = cloned_node;

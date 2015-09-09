@@ -365,6 +365,8 @@ static void print_db_env_struct (void) {
         const char *extra[]={
                              "int (*checkpointing_set_period)             (DB_ENV*, uint32_t) /* Change the delay between automatic checkpoints.  0 means disabled. */",
                              "int (*checkpointing_get_period)             (DB_ENV*, uint32_t*) /* Retrieve the delay between automatic checkpoints.  0 means disabled. */",
+                             "int (*checkpointing_set_rebalance_mode)     (DB_ENV*, uint32_t) /* Change leaf node rebalancing algorithm.  0 means use legacy/traditional mode. */",
+                             "int (*checkpointing_get_rebalance_mode)     (DB_ENV*, uint32_t*) /* Retrieve the current leaf rebalancing algorithm. */",
                              "int (*cleaner_set_period)                   (DB_ENV*, uint32_t) /* Change the delay between automatic cleaner attempts.  0 means disabled. */",
                              "int (*cleaner_get_period)                   (DB_ENV*, uint32_t*) /* Retrieve the delay between automatic cleaner attempts.  0 means disabled. */",
                              "int (*cleaner_set_iterations)               (DB_ENV*, uint32_t) /* Change the number of attempts on each cleaner invokation.  0 means disabled. */",

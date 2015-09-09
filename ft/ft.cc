@@ -966,6 +966,10 @@ void toku_ft_get_fanout(FT ft, unsigned int *fanout) {
     toku_ft_unlock(ft);
 }
 
+uint32_t toku_ft_get_rebalance_mode(FT ft) {
+    return toku_cachefile_get_rebalance_mode(ft->cf);
+}
+
 // mark the ft as a blackhole. any message injections will be a no op.
 void toku_ft_set_blackhole(FT_HANDLE ft_handle) {
     ft_handle->ft->blackhole = true;

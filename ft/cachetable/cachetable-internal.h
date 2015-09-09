@@ -405,6 +405,8 @@ public:
     void destroy();
     void set_checkpoint_period(uint32_t new_period);
     uint32_t get_checkpoint_period();
+    void set_checkpoint_rebalance_mode(uint32_t new_mode);
+    uint32_t get_checkpoint_rebalance_mode();
     int shutdown();
     bool has_been_shutdown();
     void begin_checkpoint();
@@ -415,6 +417,7 @@ public:
     // used during begin_checkpoint
     void increment_num_txns();
 private:
+    uint32_t m_rebalance_mode;   // how many transactions are in the checkpoint
     uint32_t m_checkpoint_num_txns;   // how many transactions are in the checkpoint
     TOKULOGGER m_logger;
     LSN m_lsn_of_checkpoint_in_progress;

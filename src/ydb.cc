@@ -1533,6 +1533,18 @@ env_checkpointing_set_period(DB_ENV * env, uint32_t seconds) {
 }
 
 static int
+env_checkpointing_set_rebalance_mode(DB_ENV * env, uint32_t mode) {
+    HANDLE_PANICKED_ENV(env);
+    int r = 0;
+    if (!env_opened(env)) {
+        r = EINVAL;
+    } else {
+        toku_set_checkpoint_rebalance_mode(env->i->cachetable, mode);
+    }
+    return r;
+}
+
+static int
 env_cleaner_set_period(DB_ENV * env, uint32_t seconds) {
     HANDLE_PANICKED_ENV(env);
     int r = 0;
@@ -1579,6 +1591,17 @@ env_checkpointing_get_period(DB_ENV * env, uint32_t *seconds) {
         *seconds = toku_get_checkpoint_period_unlocked(env->i->cachetable);
     return r;
 }
+
+static int
+env_checkpointing_get_rebalance_mode(DB_ENV * env, uint32_t *mode) {
+    HANDLE_PANICKED_ENV(env);
+    int r = 0;
+    if (!env_opened(env)) r = EINVAL;
+    else 
+        *mode = toku_get_checkpoint_rebalance_mode_unlocked(env->i->cachetable);
+    return r;
+}
+
 
 static int
 env_cleaner_get_period(DB_ENV * env, uint32_t *seconds) {
@@ -2593,6 +2616,8 @@ toku_env_create(DB_ENV ** envp, uint32_t flags) {
     USENV(set_data_dir);
     USENV(checkpointing_set_period);
     USENV(checkpointing_get_period);
+    USENV(checkpointing_set_rebalance_mode);
+    USENV(checkpointing_get_rebalance_mode);
     USENV(cleaner_set_period);
     USENV(cleaner_get_period);
     USENV(cleaner_set_iterations);

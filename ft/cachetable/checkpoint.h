@@ -49,6 +49,13 @@ void toku_set_checkpoint_period(CACHETABLE ct, uint32_t new_period);
 uint32_t toku_get_checkpoint_period_unlocked(CACHETABLE ct);
 
 
+//Effect: Change checkpoint rebalance logic to allow alternate rebalance
+//        algorithms.  0 means legacy/traditional algorithm.
+void toku_set_checkpoint_rebalance_mode(CACHETABLE ct, uint32_t new_mode);
+
+uint32_t toku_get_checkpoint_rebalance_mode_unlocked(CACHETABLE ct);
+
+
 /******
  *
  * NOTE: checkpoint_safe_lock is highest level lock

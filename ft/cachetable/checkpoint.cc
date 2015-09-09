@@ -90,6 +90,7 @@ void
 toku_checkpoint_get_status(CACHETABLE ct, CHECKPOINT_STATUS statp) {
     cp_status.init();
     CP_STATUS_VAL(CP_PERIOD) = toku_get_checkpoint_period_unlocked(ct);
+    CP_STATUS_VAL(CP_REBALANCE_MODE) = toku_get_checkpoint_rebalance_mode_unlocked(ct);
     *statp = cp_status;
 }
 

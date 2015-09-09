@@ -358,7 +358,7 @@ bool toku_bnc_should_promote(FT ft, NONLEAF_CHILDINFO bnc) __attribute__((const,
 
 bool toku_ftnode_nonleaf_is_gorged(FTNODE node, uint32_t nodesize);
 uint32_t toku_ftnode_leaf_num_entries(FTNODE node);
-void toku_ftnode_leaf_rebalance(FTNODE node, unsigned int basementnodesize);
+void toku_ftnode_leaf_rebalance(FT ft, FTNODE node);
 
 void toku_ftnode_leaf_run_gc(FT ft, FTNODE node);
 

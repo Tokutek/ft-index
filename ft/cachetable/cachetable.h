@@ -294,6 +294,8 @@ void toku_cachefile_set_userdata(CACHEFILE cf, void *userdata,
 void *toku_cachefile_get_userdata(CACHEFILE);
 // Effect: Get the user data.
 
+uint32_t toku_cachefile_get_rebalance_mode(CACHEFILE cf);
+
 CACHETABLE toku_cachefile_get_cachetable(CACHEFILE cf);
 // Effect: Get the cachetable.
 

@@ -148,6 +148,7 @@ void toku_ft_set_compression_method(FT ft, enum toku_compression_method method);
 void toku_ft_get_compression_method(FT ft, enum toku_compression_method *methodp);
 void toku_ft_set_fanout(FT ft, unsigned int fanout);
 void toku_ft_get_fanout(FT ft, unsigned int *fanout);
+uint32_t toku_ft_get_rebalance_mode(FT ft);
 
 // mark the ft as a blackhole. any message injections will be a no op.
 void toku_ft_set_blackhole(FT_HANDLE ft_handle);
