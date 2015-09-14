@@ -209,7 +209,9 @@ void toku_set_checkpoint_rebalance_mode (CACHETABLE ct, uint32_t new_mode) {
 }
 
 uint32_t toku_get_checkpoint_rebalance_mode_unlocked (CACHETABLE ct) {
-    return ct->cp.get_checkpoint_rebalance_mode();
+    if (ct)
+        return ct->cp.get_checkpoint_rebalance_mode();
+    return 0;
 }
 
 
@@ -1968,7 +1970,7 @@ maybe_pin_pair(
     return retval;
 }
 
-int toku_cachetable_get_and_pin_nonblocking(
+int toku_cachetable_get_and_pin_nonblocking_ex(
     CACHEFILE cf,
     CACHEKEY key,
     uint32_t fullhash,
@@ -1980,7 +1982,8 @@ int toku_cachetable_get_and_pin_nonblocking(
     CACHETABLE_PARTIAL_FETCH_CALLBACK pf_callback,
     pair_lock_type lock_type,
     void *read_extraargs,
-    UNLOCKERS unlockers
+    UNLOCKERS unlockers,
+    bool skip_clone
     )
 // See cachetable/cachetable.h.
 {
@@ -2058,7 +2061,7 @@ try_again:
         }
         assert_zero(r);
 
-        if (lock_type != PL_READ) {
+        if (lock_type != PL_READ && !skip_clone) {
             bool checkpoint_pending = get_checkpoint_pending(p, &ct->list);
             write_locked_pair_for_checkpoint(ct, p, checkpoint_pending);
         }
@@ -2891,7 +2894,9 @@ void *toku_cachefile_get_userdata(CACHEFILE cf) {
 }
 
 uint32_t toku_cachefile_get_rebalance_mode(CACHEFILE cf) {
-    return toku_get_checkpoint_rebalance_mode_unlocked(cf->cachetable);
+    if (cf)
+        return toku_get_checkpoint_rebalance_mode_unlocked(cf->cachetable);
+    return 0;
 }
 
 CACHETABLE

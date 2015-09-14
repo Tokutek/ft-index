@@ -402,7 +402,7 @@ typedef struct unlockers *UNLOCKERS;
 
 // Effect:  If the block is in the cachetable, then return it.
 //   Otherwise call the functions in unlockers, fetch the data (but don't pin it, since we'll just end up pinning it again later), and return TOKUDB_TRY_AGAIN.
-int toku_cachetable_get_and_pin_nonblocking (
+int toku_cachetable_get_and_pin_nonblocking_ex (
     CACHEFILE cf,
     CACHEKEY key,
     uint32_t fullhash,
@@ -414,8 +414,20 @@ int toku_cachetable_get_and_pin_nonblocking (
     CACHETABLE_PARTIAL_FETCH_CALLBACK pf_callback,
     pair_lock_type lock_type,
     void *read_extraargs, // parameter for fetch_callback, pf_req_callback, and pf_callback
-    UNLOCKERS unlockers
+    UNLOCKERS unlockers,
+    bool skip_clone
     );
+
+// GL - hack For test case compatibility
+#define toku_cachetable_get_and_pin_nonblocking( \
+    __cf_, __key, __fullhash, __value, __sizep, __write_callback, \
+    __fetch_callback, __pf_req_callback, __pf_callback, __lock_type, \
+    __read_extraargs, __unlockers) \
+    toku_cachetable_get_and_pin_nonblocking_ex( \
+    __cf_, __key, __fullhash, __value, __sizep, __write_callback, \
+    __fetch_callback, __pf_req_callback, __pf_callback, __lock_type, \
+    __read_extraargs, __unlockers, false)
+
 
 int toku_cachetable_maybe_get_and_pin (CACHEFILE, CACHEKEY, uint32_t /*fullhash*/, pair_lock_type, void**);
 // Effect: Maybe get and pin a memory object.

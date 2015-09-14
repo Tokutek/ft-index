@@ -173,7 +173,7 @@ toku_pin_ftnode_for_query(
         paranoid_invariant(bfe->type == ftnode_fetch_subset);
     }
     
-    int r = toku_cachetable_get_and_pin_nonblocking(
+    int r = toku_cachetable_get_and_pin_nonblocking_ex(
             ft_handle->ft->cf,
             blocknum,
             fullhash,
@@ -185,7 +185,8 @@ toku_pin_ftnode_for_query(
             toku_ftnode_pf_callback,
             PL_READ,
             bfe, //read_extraargs
-            unlockers);
+            unlockers,
+            false);
     if (r != 0) {
         assert(r == TOKUDB_TRY_AGAIN); // Any other error and we should bomb out ASAP.
         goto exit;
@@ -204,7 +205,7 @@ toku_pin_ftnode_for_query(
             toku::context apply_messages_ctx(CTX_MESSAGE_APPLICATION);
 
             toku_unpin_ftnode_read_only(ft_handle->ft, node);
-            int rr = toku_cachetable_get_and_pin_nonblocking(
+            int rr = toku_cachetable_get_and_pin_nonblocking_ex(
                  ft_handle->ft->cf,
                  blocknum,
                  fullhash,
@@ -216,7 +217,8 @@ toku_pin_ftnode_for_query(
                  toku_ftnode_pf_callback,
                  PL_WRITE_CHEAP,
                  bfe, //read_extraargs
-                 unlockers);
+                 unlockers,
+                 true);
             if (rr != 0) {
                 assert(rr == TOKUDB_TRY_AGAIN); // Any other error and we should bomb out ASAP.
                 r = TOKUDB_TRY_AGAIN;
